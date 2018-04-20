@@ -8,6 +8,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RestClient {
 
@@ -23,11 +25,17 @@ public class RestClient {
     }
 
     //POST Method
-    public CloseableHttpResponse post(String url, String payload) throws UnsupportedEncodingException, IOException {
+    public CloseableHttpResponse post(String url, String payload, HashMap<String,String> headerMap) throws IOException {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new StringEntity(payload));
+
+        //headers
+        for(Map.Entry<String,String> entry: headerMap.entrySet()){
+            httpPost.addHeader(entry.getKey(), entry.getValue());
+        }
+
         CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
 
         return closeableHttpResponse;
