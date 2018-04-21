@@ -18,6 +18,7 @@ public class PostAPITest extends BasicProperties {
 
    RestClient restClient;
    CloseableHttpResponse closeableHttpResponse;
+   GetAPITest getAPITest = new GetAPITest();
 
    public CloseableHttpResponse PostVideo(String song, String artist, String publishedDate) throws IOException {
 
@@ -37,7 +38,7 @@ public class PostAPITest extends BasicProperties {
        String inputDataToString = mapper.writeValueAsString(inputData);
        //System.out.println(inputDataToString);
 
-       GetAPITest getAPITest = new GetAPITest();
+       //GetAPITest getAPITest = new GetAPITest();
        closeableHttpResponse = restClient.post(getAPITest.setupURL(),inputDataToString,headerMap);
 
        return closeableHttpResponse;
@@ -48,10 +49,10 @@ public class PostAPITest extends BasicProperties {
        PostVideo("fernando", "abba","1975-01-01" );
    }
 
-    public JSONObject postResponseJSON(String song,String artist,String publishedDate) throws IOException {
+   public JSONObject postResponseJSON(String song,String artist,String publishedDate) throws IOException {
 
         restClient = new RestClient();
-        GetAPITest getAPITest = new GetAPITest();
+        //GetAPITest getAPITest = new GetAPITest();
         closeableHttpResponse = PostVideo(song,artist,publishedDate);
 
         //JSON Body
@@ -66,8 +67,9 @@ public class PostAPITest extends BasicProperties {
         return responseJSON;
     }
 
+    //test statusCode
     public void postApiStatusCode(String url, int statusCode, String song, String artist, String publishedDate) throws IOException {
-        //statusCode
+
         int statusCode201 = PostVideo(song,artist,publishedDate).getStatusLine().getStatusCode();
         System.out.println("Status Code is : " + statusCode201);
         Assert.assertEquals(statusCode, statusCode201);

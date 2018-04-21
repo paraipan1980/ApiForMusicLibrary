@@ -6,6 +6,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.IOException;
 
@@ -22,6 +23,13 @@ public class GetAPITest extends BasicProperties {
         baseURL = properties.getProperty("baseURL");
         serviceURL = properties.getProperty("serviceURL");
         url = baseURL+serviceURL;
+        return url;
+    }
+
+    public String setupURLwithID(String id) {
+        baseURL = properties.getProperty("baseURL");
+        serviceURL = properties.getProperty("serviceURL");
+        url = baseURL+serviceURL+"/"+id;
         return url;
     }
 
@@ -62,26 +70,37 @@ public class GetAPITest extends BasicProperties {
         String v = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/__v");
         String date_created = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/date_created");
 
-        Assert.assertEquals(artist,"Lady Gaga");
-        Assert.assertEquals(song,"Poker face");
-        Assert.assertEquals(publishDate,"2017-09-01T00:00:00.000Z");
-        Assert.assertEquals(v,"0");
-        //Assert.assertEquals(date_created,"2018-04-17T19:37:10.700Z");
-
-        artist = Util.getValueByJsonPath(getResponseJSON(),"/items[6]/artist");
-        song = Util.getValueByJsonPath(getResponseJSON(),"/items[6]/song");
-        publishDate = Util.getValueByJsonPath(getResponseJSON(),"/items[6]/publishDate");
-        v = Util.getValueByJsonPath(getResponseJSON(),"/items[6]/__v");
-        date_created = Util.getValueByJsonPath(getResponseJSON(),"/items[6]/date_created");
-
-        Assert.assertEquals(artist,"Queen");
-        Assert.assertEquals(song,"Bohemian Rhapsody");
-        Assert.assertEquals(publishDate,"1975-12-25T00:00:00.000Z");
-        Assert.assertEquals(v,"0");
-        //Assert.assertEquals(date_created,"2018-04-18T20:44:00.247Z");
+        Assert.assertTrue(artist!=null);
+        Assert.assertTrue(song!=null);
+        Assert.assertTrue(publishDate!=null);
+        Assert.assertTrue(v!=null);
+        Assert.assertTrue(date_created!=null);
     }
 
-   // public String getSongId() throws IOException {
+   public String getId(String song, String artist) throws IOException {
 
-   // }
+        String id = null;
+       for (int i = 0; i < 100; i++) {
+
+           String a = Util.getValueByJsonPath(getResponseJSON(), "/items[" + i + "]/artist");
+           String s = Util.getValueByJsonPath(getResponseJSON(),"/items[" + i + "]/song");
+           id = Util.getValueByJsonPath(getResponseJSON(), "/items[" + i + "]/_id");
+
+           if (artist.equals(a) && song.equals(s)) {
+               break;
+           }
+       }
+       return(id);
+   }
+
+    @Test
+    public void test() throws IOException {
+        System.out.println(getId("Innuendo","Queen"));
+    }
+
+    @Test
+    public void testUrl() throws IOException {
+        String id = getId("Innuendo", "Queen");
+        System.out.print(setupURLwithID(id));
+    }
 }
