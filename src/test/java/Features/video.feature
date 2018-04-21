@@ -18,14 +18,13 @@ Feature: video
         Then the video "Fear of the dark" by "Iron Maiden" published on "1991-09-01" is added to the list of videos
         And the POST status code for "Fear of the dark" by "Iron Maiden" published on "1991-09-01" is 201
 
-    Scenario: Update a specific video
+    Scenario: Patch a specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
-        When I want to update a specific video
-        Then the video is not updated
-        And the video remains the same in the complete list of videos
+        When I want to update "Innuendo" by "Queen"
+        Then the PATCH status code is 501 for "Innuendo" by "Queen"
 
     Scenario: Delete a specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
-        When I want to delete a specific video
+        When I want to delete "Poker face" by "Lady Gaga"
         Then the video is deleted
-        And it is not visible in the complete list of videos
+        And the DELETE status code is 204 for deleting "Poker face" by "Lady Gaga"

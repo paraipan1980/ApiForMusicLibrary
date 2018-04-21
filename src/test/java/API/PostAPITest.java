@@ -18,11 +18,12 @@ public class PostAPITest extends BasicProperties {
 
    RestClient restClient;
    CloseableHttpResponse closeableHttpResponse;
-   GetAPITest getAPITest = new GetAPITest();
+   Util util;
 
    public CloseableHttpResponse PostVideo(String song, String artist, String publishedDate) throws IOException {
 
        restClient = new RestClient();
+       util = new Util();
        HashMap<String, String> headerMap = new HashMap<String, String>();
        headerMap.put("Content-Type","application/json");
 
@@ -39,7 +40,7 @@ public class PostAPITest extends BasicProperties {
        //System.out.println(inputDataToString);
 
        //GetAPITest getAPITest = new GetAPITest();
-       closeableHttpResponse = restClient.post(getAPITest.setupURL(),inputDataToString,headerMap);
+       closeableHttpResponse = restClient.post(util.setupURL(),inputDataToString,headerMap);
 
        return closeableHttpResponse;
    }
@@ -51,8 +52,6 @@ public class PostAPITest extends BasicProperties {
 
    public JSONObject postResponseJSON(String song,String artist,String publishedDate) throws IOException {
 
-        restClient = new RestClient();
-        //GetAPITest getAPITest = new GetAPITest();
         closeableHttpResponse = PostVideo(song,artist,publishedDate);
 
         //JSON Body

@@ -1,8 +1,6 @@
 package API;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -39,6 +37,26 @@ public class RestClient {
         CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
 
         return closeableHttpResponse;
+    }
+
+    public CloseableHttpResponse patch(String url) throws IOException{
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPatch httpPatch = new HttpPatch(url);
+        CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPatch);
+
+        return closeableHttpResponse;
+
+    }
+
+    public CloseableHttpResponse delete(String url) throws IOException{
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpDelete httpDelete = new HttpDelete(url);
+        CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpDelete);
+
+        return closeableHttpResponse;
+
     }
 
 

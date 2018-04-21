@@ -12,26 +12,9 @@ import java.io.IOException;
 
 public class GetAPITest extends BasicProperties {
 
-    //Define Global Variables
-    String baseURL;
-    String serviceURL;
-    String url;
     RestClient restClient;
     CloseableHttpResponse closeableHttpResponse;
-
-    public String setupURL() {
-        baseURL = properties.getProperty("baseURL");
-        serviceURL = properties.getProperty("serviceURL");
-        url = baseURL+serviceURL;
-        return url;
-    }
-
-    public String setupURLwithID(String id) {
-        baseURL = properties.getProperty("baseURL");
-        serviceURL = properties.getProperty("serviceURL");
-        url = baseURL+serviceURL+"/"+id;
-        return url;
-    }
+    Util util;
 
     public void getApiStatusCode(String url, int statusCode) throws IOException {
 
@@ -49,7 +32,8 @@ public class GetAPITest extends BasicProperties {
     public JSONObject getResponseJSON() throws IOException {
 
         restClient = new RestClient();
-        closeableHttpResponse = restClient.get(setupURL());
+        util = new Util();
+        closeableHttpResponse = restClient.get(util.setupURL());
 
         //JSON Body
         String responseBody = EntityUtils.toString(closeableHttpResponse.getEntity(), "UTF-8");
@@ -77,30 +61,4 @@ public class GetAPITest extends BasicProperties {
         Assert.assertTrue(date_created!=null);
     }
 
-   public String getId(String song, String artist) throws IOException {
-
-        String id = null;
-       for (int i = 0; i < 100; i++) {
-
-           String a = Util.getValueByJsonPath(getResponseJSON(), "/items[" + i + "]/artist");
-           String s = Util.getValueByJsonPath(getResponseJSON(),"/items[" + i + "]/song");
-           id = Util.getValueByJsonPath(getResponseJSON(), "/items[" + i + "]/_id");
-
-           if (artist.equals(a) && song.equals(s)) {
-               break;
-           }
-       }
-       return(id);
-   }
-
-    @Test
-    public void test() throws IOException {
-        System.out.println(getId("Innuendo","Queen"));
-    }
-
-    @Test
-    public void testUrl() throws IOException {
-        String id = getId("Innuendo", "Queen");
-        System.out.print(setupURLwithID(id));
-    }
 }
