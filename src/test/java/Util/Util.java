@@ -1,10 +1,7 @@
 package Util;
 
 import API.GetAPITest;
-import API.RestClient;
 import Base.BasicProperties;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -37,9 +34,10 @@ public class Util extends BasicProperties{
     public String getId(String song, String artist) throws IOException {
 
         getAPITest = new GetAPITest();
+        getAPITest = new GetAPITest();
+        JSONObject j = getAPITest.getResponseJSON();
         String id = null;
-        for (int i = 0; i < 100; i++) {
-
+        for (int i = 0; i < j.length(); i++) {
             String a = Util.getValueByJsonPath(getAPITest.getResponseJSON(), "/items[" + i + "]/artist");
             String s = Util.getValueByJsonPath(getAPITest.getResponseJSON(),"/items[" + i + "]/song");
             id = Util.getValueByJsonPath(getAPITest.getResponseJSON(), "/items[" + i + "]/_id");
@@ -60,6 +58,34 @@ public class Util extends BasicProperties{
     public void testUrl() throws IOException {
         String id = getId("Innuendo", "Queen");
         System.out.print(setupURLwithID(id));
+    }
+
+    public String checkIfSongIsInTheList(String song) throws IOException {
+
+        getAPITest = new GetAPITest();
+        JSONObject jObject = getAPITest.getResponseJSON();
+
+        //converting the json object to array
+        JSONArray jArray = jObject.getJSONArray("items");
+
+        String songInArray = null;
+
+        for (int i = 0; i < jArray.length(); i++) {
+            JSONObject childJObject = jArray.getJSONObject(i);
+            songInArray = childJObject.getString("song");
+
+            if (songInArray.equals(song)) {
+                System.out.println("ERROR: The song is already in the list. It cannot be added again.");
+                break;
+            }
+        }
+        return songInArray;
+    }
+
+    @Test
+    public void testSongInTheList() throws IOException {
+        checkIfSongIsInTheList("xxx");
+        System.out.println(checkIfSongIsInTheList("xxx"));
     }
 
     public static String getValueByJsonPath(JSONObject responsejson, String JSONpath){

@@ -1,9 +1,6 @@
 package StepDefinitions;
 
-import API.GetAPITest;
-import API.PatchAPITest;
-import API.PostAPITest;
-import API.RestClient;
+import API.*;
 import Util.Util;
 import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
@@ -19,6 +16,7 @@ public class MyStepdefs {
     GetAPITest getAPITest;
     PostAPITest postAPITest;
     PatchAPITest patchAPITest;
+    DeleteAPITest deleteAPItest;
     Util util;
 
     @Given("^I access the api at \"([^\"]*)\"$")
@@ -80,6 +78,13 @@ public class MyStepdefs {
         postAPITest.PostVideo(song,artist,publishedDate);
     }
 
+    @And("^the video \"([^\"]*)\" is not in the list already$")
+    public void theVideoIsNotInTheListAlready(String song) throws Throwable {
+        util = new Util();
+        util.checkIfSongIsInTheList(song);
+        Assert.assertFalse(song.equals(util.checkIfSongIsInTheList(song)));
+    }
+
     @Then("^the video \"([^\"]*)\" by \"([^\"]*)\" published on \"([^\"]*)\" is added to the list of videos$")
     public void theVideoByPublishedOnIsAddedToTheListOfVideos(String song, String artist, String publishedDate) throws IOException {
         postAPITest = new PostAPITest();
@@ -111,4 +116,28 @@ public class MyStepdefs {
         String url = util.setupURLwithID(id);
         patchAPITest.patchApiStatusCode(url,statusCode);
     }
+
+    @When("^I want to delete \"([^\"]*)\" by \"([^\"]*)\"$")
+    public void iWantToDeleteBy(String song, String artist) throws IOException {
+        util = new Util();
+        restClient = new RestClient();
+        String id = util.getId(song,artist);
+        String url = util.setupURLwithID(id);
+        restClient.delete(url);
+    }
+
+    @Then("^the video is deleted$")
+    public void theVideoIsDeleted()  {
+        ///check the video is not in the list
+    }
+
+    @And("^the DELETE status code is (\\d+) for deleting \"([^\"]*)\" by \"([^\"]*)\"$")
+    public void theDELETEStatusCodeIsForDeletingBy(int statusCode, String song, String artist) throws IOException {
+        util = new Util();
+        deleteAPItest = new DeleteAPITest();
+        String id = util.getId(song,artist);
+        String url = util.setupURLwithID(id);
+        deleteAPItest.deleteApiStatusCode(url,statusCode);
+    }
+
 }
