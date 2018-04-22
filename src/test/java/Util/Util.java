@@ -219,12 +219,13 @@ public class Util extends BasicProperties{
         String s = checkIfPlaylistIsInTheList("Classic Rock List");
         System.out.println(s);
     }
+
     public String getPlaylistId(String title, String desc) throws IOException {
 
         getAPITest = new GetAPITest();
         util = new Util();
         restClient = new RestClient();
-        closeableHttpResponse = restClient.get(util.setupURL());
+        closeableHttpResponse = restClient.get(util.setupPlaylistURL());
         JSONObject jObject = getAPITest.getResponseJSON(closeableHttpResponse);
 
         JSONArray jArray = jObject.getJSONArray("items");
@@ -249,7 +250,7 @@ public class Util extends BasicProperties{
 
     @Test
     public void testID() throws IOException {
-        System.out.println(getPlaylistId("xxx", "xxx"));
+        System.out.println(getPlaylistId("Top 200", "Larry's Favourite"));
     }
 
 
