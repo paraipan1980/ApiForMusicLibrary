@@ -17,7 +17,7 @@ Feature: video
         And the video "Fear of the dark" is not in the list already
         When I want to add to the list "Fear of the dark" by "Iron Maiden" published on "1991-09-01"
         Then the video "Fear of the dark" by "Iron Maiden" published on "1991-09-01" is added to the list of videos
-        And the POST status code for "Fear of the dark" by "Iron Maiden" published on "1991-09-01" is 201
+        And the POST status code is 201
 
     Scenario: Patch a specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
@@ -28,4 +28,4 @@ Feature: video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
         When I want to delete "Fear of the dark" by "Iron Maiden"
         Then the video is deleted
-        And the DELETE status code is 204 for deleting "Fear of the dark" by "Iron Maiden"
+        And the DELETE status code is 204

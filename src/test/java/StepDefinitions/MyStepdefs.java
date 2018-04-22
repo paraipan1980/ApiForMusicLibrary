@@ -7,6 +7,8 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.json.JSONObject;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -18,6 +20,8 @@ public class MyStepdefs {
     PatchAPITest patchAPITest;
     DeleteAPITest deleteAPItest;
     Util util;
+    public CloseableHttpResponse closeableHttpResponse;
+    public JSONObject responseJSON = new JSONObject();
 
     @Given("^I access the api at \"([^\"]*)\"$")
     public void iAccessTheApiAt(String endpoint) {
@@ -72,12 +76,6 @@ public class MyStepdefs {
         getAPITest.getApiStatusCode(url,statusCode);
     }
 
-    @When("^I want to add to the list \"([^\"]*)\" by \"([^\"]*)\" published on \"([^\"]*)\"$")
-    public void iWantToAddToTheListByPublishedOn(String song, String artist, String publishedDate) throws IOException {
-        postAPITest = new PostAPITest();
-        postAPITest.PostVideo(song,artist,publishedDate);
-    }
-
     @And("^the video \"([^\"]*)\" is not in the list already$")
     public void theVideoIsNotInTheListAlready(String song) throws Throwable {
         util = new Util();
@@ -85,18 +83,25 @@ public class MyStepdefs {
         Assert.assertFalse(song.equals(util.checkIfSongIsInTheList(song)));
     }
 
+    @When("^I want to add to the list \"([^\"]*)\" by \"([^\"]*)\" published on \"([^\"]*)\"$")
+    public void iWantToAddToTheListByPublishedOn(String song, String artist, String publishedDate) throws IOException {
+        postAPITest = new PostAPITest();
+        closeableHttpResponse = postAPITest.PostVideo(song,artist,publishedDate);
+    }
+
     @Then("^the video \"([^\"]*)\" by \"([^\"]*)\" published on \"([^\"]*)\" is added to the list of videos$")
     public void theVideoByPublishedOnIsAddedToTheListOfVideos(String song, String artist, String publishedDate) throws IOException {
         postAPITest = new PostAPITest();
-        postAPITest.postApiResponseBody(song,artist,publishedDate);
+        responseJSON = postAPITest.postResponseJSON(closeableHttpResponse);
+        postAPITest.postApiResponseBody(song,artist,publishedDate, responseJSON);
         //check that its in the list of videos
         //test the header
     }
 
-    @And("^the POST status code for \"([^\"]*)\" by \"([^\"]*)\" published on \"([^\"]*)\" is (\\d+)$")
-    public void thePOSTStatusCodeForByPublishedOnIs(String song, String artist, String publishedDate, int statusCode) throws IOException{
+    @And("^the POST status code is (\\d+)$")
+    public void thePOSTStatusCodeIs(int statusCode) throws IOException {
         postAPITest = new PostAPITest();
-        postAPITest.postApiStatusCode(util.setupURL(),statusCode,song,artist,publishedDate);
+        postAPITest.postApiStatusCode(closeableHttpResponse,statusCode);
     }
 
     @When("^I want to update \"([^\"]*)\" by \"([^\"]*)\"$")
@@ -123,7 +128,7 @@ public class MyStepdefs {
         restClient = new RestClient();
         String id = util.getId(song,artist);
         String url = util.setupURLwithID(id);
-        restClient.delete(url);
+        closeableHttpResponse = restClient.delete(url);
     }
 
     @Then("^the video is deleted$")
@@ -131,13 +136,12 @@ public class MyStepdefs {
         ///check the video is not in the list
     }
 
-    @And("^the DELETE status code is (\\d+) for deleting \"([^\"]*)\" by \"([^\"]*)\"$")
-    public void theDELETEStatusCodeIsForDeletingBy(int statusCode, String song, String artist) throws IOException {
+
+    @And("^the DELETE status code is (\\d+)$")
+    public void theDELETEStatusCodeIs(int statusCode) {
         util = new Util();
         deleteAPItest = new DeleteAPITest();
-        String id = util.getId(song,artist);
-        String url = util.setupURLwithID(id);
-        deleteAPItest.deleteApiStatusCode(url,statusCode);
+        deleteAPItest.deleteApiStatusCode(closeableHttpResponse,statusCode);
     }
 
 }

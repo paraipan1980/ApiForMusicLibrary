@@ -37,9 +37,7 @@ public class PostAPITest extends BasicProperties {
 
        //convert object to Json in String
        String inputDataToString = mapper.writeValueAsString(inputData);
-       //System.out.println(inputDataToString);
 
-       //GetAPITest getAPITest = new GetAPITest();
        closeableHttpResponse = restClient.post(util.setupURL(),inputDataToString,headerMap);
 
        return closeableHttpResponse;
@@ -50,9 +48,7 @@ public class PostAPITest extends BasicProperties {
        PostVideo("fernando", "abba","1975-01-01" );
    }
 
-   public JSONObject postResponseJSON(String song,String artist,String publishedDate) throws IOException {
-
-        closeableHttpResponse = PostVideo(song,artist,publishedDate);
+   public JSONObject postResponseJSON(CloseableHttpResponse closeableHttpResponse) throws IOException {
 
         //JSON Body
         String responseBody = EntityUtils.toString(closeableHttpResponse.getEntity(), "UTF-8");
@@ -67,26 +63,22 @@ public class PostAPITest extends BasicProperties {
     }
 
     //test statusCode
-    public void postApiStatusCode(String url, int statusCode, String song, String artist, String publishedDate) throws IOException {
+    public void postApiStatusCode(CloseableHttpResponse closeableHttpResponse, int statusCode) throws IOException {
 
-        int statusCode201 = PostVideo(song,artist,publishedDate).getStatusLine().getStatusCode();
+        int statusCode201 = closeableHttpResponse.getStatusLine().getStatusCode();
         System.out.println("Status Code is : " + statusCode201);
         Assert.assertEquals(statusCode, statusCode201);
     }
 
-    public void postApiResponseBody(String song, String artist, String publishedDate) throws IOException {
-
-        String artistResp = Util.getValueByJsonPath(postResponseJSON(song,artist,publishedDate),"/artist");
-        String songResp = Util.getValueByJsonPath(postResponseJSON(song,artist,publishedDate),"/song");
-        String publishedDateResp = Util.getValueByJsonPath(postResponseJSON(song,artist,publishedDate),"/publishDate");
-        String v = Util.getValueByJsonPath(postResponseJSON(song,artist,publishedDate),"/__v");
-        String date_created = Util.getValueByJsonPath(postResponseJSON(song,artist,publishedDate),"/date_created");
+    public void postApiResponseBody(String song, String artist, String publishedDate, JSONObject responseJSON) throws IOException {
+        String artistResp = Util.getValueByJsonPath(responseJSON,"/artist");
+        String songResp = Util.getValueByJsonPath(responseJSON,"/song");
+        String publishedDateResp = Util.getValueByJsonPath(responseJSON,"/publishDate");
+        String v = Util.getValueByJsonPath(responseJSON,"/__v");
 
         Assert.assertEquals(artist,artistResp);
         Assert.assertEquals(song,songResp);
         Assert.assertTrue(publishedDateResp.contains(publishedDate));
         Assert.assertEquals(v,"0");
-        //Assert.assertEquals(date_created,"2018-04-17T19:37:10.700Z");
-
     }
 }
