@@ -16,10 +16,7 @@ public class PatchAPITest extends BasicProperties {
         CloseableHttpResponse closeableHttpResponse;
         Util util;
 
-        public void patchApiStatusCode(String url, int statusCode) throws IOException {
-
-            restClient = new RestClient();
-            closeableHttpResponse = restClient.patch(url);
+        public void patchApiStatusCode(CloseableHttpResponse closeableHttpResponse, int statusCode) throws IOException {
 
             //statusCode
             int statusCode501 = closeableHttpResponse.getStatusLine().getStatusCode();
@@ -29,25 +26,10 @@ public class PatchAPITest extends BasicProperties {
 
         @Test
         public void testStatusCode() throws  IOException {
+
             util = new Util();
-            String url = util.setupURLwithID("5ad64ce6f8cca6035fe8f06b");
-            patchApiStatusCode(url,500);
+            String url = util.setupURLwithID("5adc8ecb1bdd190389781a0c");
+            patchApiStatusCode(closeableHttpResponse,500);
         }
-
-        public JSONObject patchResponseJSON(String url) throws IOException {
-
-            restClient = new RestClient();
-            util = new Util();
-            closeableHttpResponse = restClient.patch(url);
-
-            //JSON Body
-            String responseBody = EntityUtils.toString(closeableHttpResponse.getEntity(), "UTF-8");
-
-            JSONObject responseJSON = new JSONObject(responseBody);
-            return responseJSON;
-
-         }
-
-
 }
 

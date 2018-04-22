@@ -11,14 +11,7 @@ import java.io.IOException;
 
 public class GetAPITest extends BasicProperties {
 
-    RestClient restClient;
-    CloseableHttpResponse closeableHttpResponse;
-    Util util;
-
-    public void getApiStatusCode(String url, int statusCode) throws IOException {
-
-        restClient = new RestClient();
-        closeableHttpResponse = restClient.get(url);
+    public void getApiStatusCode(CloseableHttpResponse closeableHttpResponse, int statusCode) throws IOException {
 
         //statusCode
         int statusCode200 = closeableHttpResponse.getStatusLine().getStatusCode();
@@ -28,11 +21,7 @@ public class GetAPITest extends BasicProperties {
 
     }
 
-    public JSONObject getResponseJSON() throws IOException {
-
-        restClient = new RestClient();
-        util = new Util();
-        closeableHttpResponse = restClient.get(util.setupURL());
+    public JSONObject getResponseJSON(CloseableHttpResponse closeableHttpResponse) throws IOException {
 
         //JSON Body
         String responseBody = EntityUtils.toString(closeableHttpResponse.getEntity(), "UTF-8");
@@ -45,13 +34,13 @@ public class GetAPITest extends BasicProperties {
         return responseJSON;
     }
 
-    public void getApiResponseBody(String url) throws IOException {
+    public void getApiResponseBody(JSONObject responseJSON) throws IOException {
 
-        String artist = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/artist");
-        String song = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/song");
-        String publishDate = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/publishDate");
-        String v = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/__v");
-        String date_created = Util.getValueByJsonPath(getResponseJSON(),"/items[0]/date_created");
+        String artist = Util.getValueByJsonPath(responseJSON,"/items[0]/artist");
+        String song = Util.getValueByJsonPath(responseJSON,"/items[0]/song");
+        String publishDate = Util.getValueByJsonPath(responseJSON,"/items[0]/publishDate");
+        String v = Util.getValueByJsonPath(responseJSON,"/items[0]/__v");
+        String date_created = Util.getValueByJsonPath(responseJSON,"/items[0]/date_created");
 
         Assert.assertTrue(artist!=null);
         Assert.assertTrue(song!=null);

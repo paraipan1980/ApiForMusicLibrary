@@ -2,6 +2,7 @@ Feature: video
 
     Scenario: Get Request for the complete list of videos
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
+        And the list is not empty
         When I request the list of videos
         Then I receive the correct json file with the list of videos
         And the GET status code is 200
@@ -22,10 +23,10 @@ Feature: video
     Scenario: Patch a specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
         When I want to update "Innuendo" by "Queen"
-        Then the PATCH status code is 501 for "Innuendo" by "Queen"
+        Then the PATCH status code is 501
 
     Scenario: Delete a specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
-        When I want to delete "Fear of the dark" by "Iron Maiden"
+        When I delete "Fear of the dark" by "Iron Maiden"
         Then the video is deleted
         And the DELETE status code is 204
