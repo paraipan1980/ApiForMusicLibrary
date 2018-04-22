@@ -9,9 +9,9 @@ Feature: video
 
     Scenario: Get Request for one specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
-        When I request "Innuendo" by "Queen"
-        Then I receive the correct json file for "Innuendo" by "Queen"
-        And the new GET status code is 200 for "Innuendo" by "Queen"
+        When I request "One" by "Metallica"
+        Then I receive the correct json file for "One" by "Metallica"
+        And the new GET status code is 200 for "One" by "Metallica"
 
     Scenario: Post Request for one specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
@@ -28,5 +28,5 @@ Feature: video
     Scenario: Delete a specific video
         Given I access the api at "http://turing.niallbunting.com:3003/api/video"
         When I delete "Fear of the dark" by "Iron Maiden"
-        Then the video is deleted
+        Then the video for "Fear of the dark" is deleted
         And the DELETE status code is 204

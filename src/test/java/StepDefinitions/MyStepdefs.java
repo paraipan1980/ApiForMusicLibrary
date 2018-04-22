@@ -67,30 +67,32 @@ public class MyStepdefs {
         closeableHttpResponse = restClient.get(util.setupURL());
         responseJSON = getAPITest.getResponseJSON(closeableHttpResponse);
         String id = util.getId(song,artist);
-        String url = util.setupURLwithID(id);
-        restClient.get(url);
+        if (id != null) {
+            String url = util.setupURLwithID(id);
+            restClient.get(url);
+        } else {
+            System.out.println("\n");
+            System.out.println("ERROR: The requested video is not in the list");
+            Assert.assertEquals(1,2);
+        }
     }
 
     @Then("^I receive the correct json file for \"([^\"]*)\" by \"([^\"]*)\"$")
-    public void iReceiveTheCorrectJsonFileForBy(String song, String artist) throws IOException {
-        util = new Util();
-        String id = util.getId(song,artist);
-        String url = util.setupURLwithID(id);
-        getAPITest.getApiResponseBody(responseJSON);
+    public void iReceiveTheCorrectJsonFileForBy(String song, String artist) {
+        getAPITest = new GetAPITest();
+        getAPITest.getApiResponseBodyForOneVideo(song, artist, responseJSON);
     }
 
     @And("^the new GET status code is (\\d+) for \"([^\"]*)\" by \"([^\"]*)\"$")
     public void theNewGETStatusCodeIsForBy(int statusCode, String song, String artist) throws IOException {
-        util = new Util();
         getAPITest = new GetAPITest();
-        String id = util.getId(song,artist);
         getAPITest.getApiStatusCode(closeableHttpResponse,statusCode);
     }
 
    // Post Request for one specific video *****************************
 
     @And("^the video \"([^\"]*)\" is not in the list already$")
-    public void theVideoIsNotInTheListAlready(String song) throws Throwable {
+    public void theVideoIsNotInTheListAlready(String song) throws IOException {
         util = new Util();
         String songInArray = util.checkIfSongIsInTheList(song);
         Assert.assertFalse(song.equals(songInArray));
@@ -105,14 +107,13 @@ public class MyStepdefs {
     @Then("^the video \"([^\"]*)\" by \"([^\"]*)\" published on \"([^\"]*)\" is added to the list of videos$")
     public void theVideoByPublishedOnIsAddedToTheListOfVideos(String song, String artist, String publishedDate) throws IOException {
         postAPITest = new PostAPITest();
+        util = new Util();
         responseJSON = postAPITest.postResponseJSON(closeableHttpResponse);
         postAPITest.postApiResponseBody(song,artist,publishedDate, responseJSON);
-        //check that its in the list of videos
-        //test the header
     }
 
     @And("^the POST status code is (\\d+)$")
-    public void thePOSTStatusCodeIs(int statusCode) throws IOException {
+    public void thePOSTStatusCodeIs(int statusCode) {
         postAPITest = new PostAPITest();
         postAPITest.postApiStatusCode(closeableHttpResponse,statusCode);
     }
@@ -155,9 +156,12 @@ public class MyStepdefs {
         }
     }
 
-    @Then("^the video is deleted$")
-    public void theVideoIsDeleted()  {
-        ///check the video is not in the list
+
+    @Then("^the video for \"([^\"]*)\" is deleted$")
+    public void theVideoForIsDeleted(String song) throws IOException {
+        util = new Util();
+        String songInArray = util.checkIfSongIsInTheList(song);
+        Assert.assertFalse(song.equals(songInArray));
     }
 
 
@@ -174,5 +178,4 @@ public class MyStepdefs {
             System.out.println("ERROR: The request does not work because there the ID in /api/video/(id) does not exist");
         }
     }
-
 }

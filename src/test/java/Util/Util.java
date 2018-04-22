@@ -15,7 +15,8 @@ public class Util extends BasicProperties{
 
     //Define Global Variables
     String baseURL;
-    String serviceURL;
+    String videoURL;
+    String playlistURL;
     String url;
     GetAPITest getAPITest;
     RestClient restClient;
@@ -24,17 +25,32 @@ public class Util extends BasicProperties{
 
     public String setupURL() {
         baseURL = properties.getProperty("baseURL");
-        serviceURL = properties.getProperty("serviceURL");
-        url = baseURL+serviceURL;
+        videoURL = properties.getProperty("videoURL");
+        url = baseURL+videoURL;
         return url;
     }
 
     public String setupURLwithID(String id) {
         baseURL = properties.getProperty("baseURL");
-        serviceURL = properties.getProperty("serviceURL");
-        url = baseURL+serviceURL+"/"+id;
+        videoURL = properties.getProperty("videoURL");
+        url = baseURL+videoURL+"/"+id;
         return url;
     }
+
+    public String setupPlaylistURL() {
+        baseURL = properties.getProperty("baseURL");
+        playlistURL = properties.getProperty("playlistURL");
+        url = baseURL+playlistURL;
+        return url;
+    }
+
+    public String setupPlaylistURLwithID(String id) {
+        baseURL = properties.getProperty("baseURL");
+        playlistURL = properties.getProperty("playlistURL");
+        url = baseURL+playlistURL+"/"+id;
+        return url;
+    }
+
 
     public String getId(String song, String artist) throws IOException {
 
@@ -45,7 +61,6 @@ public class Util extends BasicProperties{
         JSONObject jObject = getAPITest.getResponseJSON(closeableHttpResponse);
 
         JSONArray jArray = jObject.getJSONArray("items");
-        boolean found = false;
 
         String id = null;
         String s;
@@ -67,7 +82,7 @@ public class Util extends BasicProperties{
 
     @Test
     public void test() throws IOException {
-        System.out.println(getId("One", "Metallica"));
+        System.out.println(getId("xxx", "xxx"));
     }
 
     @Test
@@ -106,7 +121,7 @@ public class Util extends BasicProperties{
     @Test
     public void testSongInTheList() throws IOException {
 
-        String s = checkIfSongIsInTheList("xxx");
+        String s = checkIfSongIsInTheList("One");
         System.out.println(s);
     }
 
@@ -145,6 +160,96 @@ public class Util extends BasicProperties{
     @Test
     public void testEmptyList() throws IOException {
         checkIfSongListIsEmpty();
+    }
+
+    public void checkIfListOfPlaylistsIsEmpty() throws IOException {
+
+        getAPITest = new GetAPITest();
+        restClient = new RestClient();
+        util = new Util();
+        closeableHttpResponse = restClient.get(util.setupPlaylistURL());
+
+        JSONObject jObject = getAPITest.getResponseJSON(closeableHttpResponse);
+
+        //converting the json object to array
+        JSONArray jArray = jObject.getJSONArray("items");
+
+        if (jArray.length() == 0) {
+            System.out.println("ERROR: The list is empty");
+        }
+        else {
+            System.out.println("The list is populated");
+        }
+    }
+
+    @Test
+    public void testEmptyListOfPLaylists() throws IOException {
+        checkIfListOfPlaylistsIsEmpty();
+    }
+
+    public String checkIfPlaylistIsInTheList(String playlist) throws IOException {
+
+        getAPITest = new GetAPITest();
+        util = new Util();
+        restClient = new RestClient();
+
+        closeableHttpResponse = restClient.get(util.setupPlaylistURL());
+        JSONObject jObject = getAPITest.getResponseJSON(closeableHttpResponse);
+
+        //converting the json object to array
+        JSONArray jArray = jObject.getJSONArray("items");
+
+        String playlistInArray = null;
+
+        for (int i = 0; i < jArray.length(); i++) {
+            JSONObject childJObject = jArray.getJSONObject(i);
+            playlistInArray = childJObject.getString("title");
+
+            if (playlistInArray.equals(playlist)) {
+                System.out.println("ERROR: The playlist is already in the list. It cannot be added again.");
+                break;
+            }
+        }
+        return playlistInArray;
+    }
+
+    @Test
+    public void testPlaylistInTheList() throws IOException {
+
+        String s = checkIfPlaylistIsInTheList("Classic Rock List");
+        System.out.println(s);
+    }
+    public String getPlaylistId(String title, String desc) throws IOException {
+
+        getAPITest = new GetAPITest();
+        util = new Util();
+        restClient = new RestClient();
+        closeableHttpResponse = restClient.get(util.setupURL());
+        JSONObject jObject = getAPITest.getResponseJSON(closeableHttpResponse);
+
+        JSONArray jArray = jObject.getJSONArray("items");
+
+        String id = null;
+        String t;
+        String d;
+
+        for (int i = 0; i < jArray.length(); i++) {
+            JSONObject childJObject = jArray.getJSONObject(i);
+            t = childJObject.getString("title");
+            d = childJObject.getString("desc");
+
+            if (t.equals(title)) {
+                if(d.equals(desc)) {
+                    {id = childJObject.getString("_id");}
+                }
+            }
+        }
+        return id;
+    }
+
+    @Test
+    public void testID() throws IOException {
+        System.out.println(getPlaylistId("xxx", "xxx"));
     }
 
 
