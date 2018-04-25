@@ -154,5 +154,31 @@ public class MyPlaylistStepdefs {
         }
     }
 
+    //Patch a specific video***********************************************
+
+    @When("^I want to add a video to a list$")
+    public void iWantToAddAVideoToAList() {
+
+    }
+
+    @Then("^the PATCH status code for this request is (\\d+)$")
+    public void thePATCHStatusCodeForThisRequestIs(int statusCode) throws Throwable {
+        patchAPITest = new PatchAPITest();
+        patchAPITest.testPatchAdd(statusCode);
+
+    }
+
+
+    @When("^I want to remove a video from a list$")
+    public void iWantToRemoveAVideoFromAList() {
+
+    }
+
+
+    @Then("^the PATCH status code for this is (\\d+)$")
+    public void thePATCHStatusCodeForThisIs(int statusCode) throws Throwable {
+        patchAPITest = new PatchAPITest();
+        patchAPITest.testPatchAdd(statusCode);
+    }
 }
 

@@ -22,8 +22,13 @@ Feature: playlist
 
     Scenario: Patch a specific video
         Given I access the api for playlists at "http://turing.niallbunting.com:3003/api/playlist"
-        When I want to update "Innuendo" by "Queen"x
-        Then the PATCH status code is 501x
+        When I want to add a video to a list
+        Then the PATCH status code for this request is 204
+
+    Scenario: Remove a specific video
+        Given I access the api for playlists at "http://turing.niallbunting.com:3003/api/playlist"
+        When I want to remove a video from a list
+        Then the PATCH status code for this is 501
 
     Scenario: Delete a specific video
         Given I access the api for playlists at "http://turing.niallbunting.com:3003/api/playlist"
