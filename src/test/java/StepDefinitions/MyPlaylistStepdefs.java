@@ -62,6 +62,27 @@ public class MyPlaylistStepdefs {
 
     //Get Request for one specific playlist************************************
 
+    @When("^I request \"([^\"]*)\" list$")
+    public void iRequestList(String playlist) throws Throwable {
+        util = new Util();
+        restClient = new RestClient();
+        getAPITest = new GetAPITest();
+        String id = util.getPlaylistId(playlist);
+        closeableHttpResponse = restClient.get(util.setupPlaylistURLwithID(id));
+    }
+
+    @Then("^I receive the correct json file for \"([^\"]*)\"$")
+    public void iReceiveTheCorrectJsonFileFor(String playlist) throws Throwable {
+        responseJSON = getAPITest.getResponseJSON(closeableHttpResponse);
+        getAPITest = new GetAPITest();
+        getAPITest.getApiResponseBodyForOnePlaylist(playlist,responseJSON);
+    }
+
+    @And("^the new GET status code is (\\d+) for \"([^\"]*)\"$")
+    public void theNewGETStatusCodeIsFor(int statusCode, String playlist) throws Throwable {
+        getAPITest = new GetAPITest();
+        getAPITest.getApiStatusCode(closeableHttpResponse,statusCode);
+    }
 
     //Post Request for one specific playlist***********************************
 
@@ -99,7 +120,7 @@ public class MyPlaylistStepdefs {
         try{
             util = new Util();
             restClient = new RestClient();
-            String id = util.getPlaylistId(title,desc);
+            String id = util.getPlaylistId(title);
             String url = util.setupPlaylistURLwithID(id);
             closeableHttpResponse = restClient.delete(url);
         }
@@ -132,5 +153,6 @@ public class MyPlaylistStepdefs {
             System.out.println("ERROR: The request does not work because there the ID in /api/playlist/(id) does not exist");
         }
     }
+
 }
 

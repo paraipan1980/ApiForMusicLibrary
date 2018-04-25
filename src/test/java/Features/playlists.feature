@@ -9,9 +9,9 @@ Feature: playlist
 
     Scenario: Get Request for one specific playlist
         Given I access the api for playlists at "http://turing.niallbunting.com:3003/api/playlist"
-        When I request "Innuendo" by "Queen"x
-        Then I receive the correct json file for "Innuendo" by "Queen"x
-        And the new GET status code is 200 for "Innuendo" by "Queen"x
+        When I request "Chill List" list
+        Then I receive the correct json file for "Chill List"
+        And the new GET status code is 200 for "Chill List"
 
     Scenario: Post Request for one specific video
         Given I access the api for playlists at "http://turing.niallbunting.com:3003/api/playlist"

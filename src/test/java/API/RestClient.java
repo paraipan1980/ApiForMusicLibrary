@@ -42,6 +42,24 @@ public class RestClient {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPatch httpPatch = new HttpPatch(url);
+
+        CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPatch);
+
+        return closeableHttpResponse;
+
+    }
+
+    public CloseableHttpResponse patchPlaylist(String url, String payload, HashMap<String,String> headerMap) throws IOException{
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPatch httpPatch = new HttpPatch(url);
+        httpPatch.setEntity(new StringEntity(payload));
+
+        //headers
+        for(Map.Entry<String,String> entry: headerMap.entrySet()){
+            httpPatch.addHeader(entry.getKey(), entry.getValue());
+        }
+
         CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPatch);
 
         return closeableHttpResponse;

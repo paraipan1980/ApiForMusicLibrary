@@ -1,13 +1,16 @@
 package API;
 
 import Base.BasicProperties;
+import Data.InputData;
 import Util.Util;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 public class GetAPITest extends BasicProperties {
@@ -36,7 +39,7 @@ public class GetAPITest extends BasicProperties {
         return responseJSON;
     }
 
-    public void getApiResponseBody(JSONObject responseJSON) throws IOException {
+    public void getApiResponseBody(JSONObject responseJSON) {
 
         String artist = Util.getValueByJsonPath(responseJSON,"/items[0]/artist");
         String song = Util.getValueByJsonPath(responseJSON,"/items[0]/song");
@@ -73,16 +76,13 @@ public class GetAPITest extends BasicProperties {
         Util util = new Util();
         RestClient restClient = new RestClient();
         GetAPITest getAPITest = new GetAPITest();
-        JSONObject responseJSON = new JSONObject();
+        JSONObject responseJSON;
         CloseableHttpResponse closeableHttpResponse = restClient.get(util.setupURL());
         responseJSON = getAPITest.getResponseJSON(closeableHttpResponse);
-        String id = util.getId(song,artist);
         getApiResponseBodyForOneVideo(song,artist,responseJSON);
     }
 
-
-
-    public void getApiPlaylistResponseBody(JSONObject responseJSON) throws IOException {
+    public void getApiPlaylistResponseBody(JSONObject responseJSON) {
 
         String desc = Util.getValueByJsonPath(responseJSON,"/items[0]/desc");
         String title = Util.getValueByJsonPath(responseJSON,"/items[0]/title");
@@ -93,6 +93,52 @@ public class GetAPITest extends BasicProperties {
         Assert.assertTrue(title!=null);
         Assert.assertTrue(v!=null);
         Assert.assertTrue(date_created!=null);
+    }
+
+    @Test
+    public void testPlaylistRespAll() throws IOException {
+        RestClient restClient = new RestClient();
+        GetAPITest getAPITest = new GetAPITest();
+        JSONObject responseJSON;
+        Util util = new Util();
+        CloseableHttpResponse closeableHttpResponse = restClient.get(util.setupPlaylistURL());
+        responseJSON = getAPITest.getResponseJSON(closeableHttpResponse);
+        getApiPlaylistResponseBody(responseJSON);
+    }
+
+    public void getApiResponseBodyForOnePlaylist(String title,JSONObject responseJSON) {
+
+        String descArray = Util.getValueByJsonPath(responseJSON,"/desc");
+        String titleArray = Util.getValueByJsonPath(responseJSON,"/title");
+        String videosArray = Util.getValueByJsonPath(responseJSON,"/videos");
+        String artistArray = Util.getValueByJsonPath(responseJSON,"/videos[0]/artist");
+        String songArray = Util.getValueByJsonPath(responseJSON,"/videos[0]/song");
+        String publishDateArray = Util.getValueByJsonPath(responseJSON,"/videos[0]/publishDate");
+        System.out.println(videosArray);
+        Assert.assertTrue(titleArray.equals(title));
+        Assert.assertTrue(descArray!=null);
+        Assert.assertTrue(videosArray!=null);
+
+        Assert.assertTrue(artistArray!=null);
+        Assert.assertTrue(songArray!=null);
+        Assert.assertTrue(publishDateArray!=null);
+        if (artistArray!=null) {
+            Assert.assertTrue(songArray!=null);
+            Assert.assertTrue(publishDateArray!=null);
+        }
+    }
+
+    @Test
+    public void testPlaylistResp() throws IOException {
+        String title = "Chill List";
+        Util util = new Util();
+        RestClient restClient = new RestClient();
+        GetAPITest getAPITest = new GetAPITest();
+        JSONObject responseJSON;
+        String id = util.getPlaylistId(title);
+        CloseableHttpResponse closeableHttpResponse = restClient.get(util.setupPlaylistURLwithID(id));
+        responseJSON = getAPITest.getResponseJSON(closeableHttpResponse);
+        getApiResponseBodyForOnePlaylist(title,responseJSON);
     }
 
 }

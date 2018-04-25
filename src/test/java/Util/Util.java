@@ -220,7 +220,7 @@ public class Util extends BasicProperties{
         System.out.println(s);
     }
 
-    public String getPlaylistId(String title, String desc) throws IOException {
+    public String getPlaylistId(String title) throws IOException {
 
         getAPITest = new GetAPITest();
         util = new Util();
@@ -232,17 +232,13 @@ public class Util extends BasicProperties{
 
         String id = null;
         String t;
-        String d;
 
         for (int i = 0; i < jArray.length(); i++) {
             JSONObject childJObject = jArray.getJSONObject(i);
             t = childJObject.getString("title");
-            d = childJObject.getString("desc");
 
             if (t.equals(title)) {
-                if(d.equals(desc)) {
                     {id = childJObject.getString("_id");}
-                }
             }
         }
         return id;
@@ -250,7 +246,7 @@ public class Util extends BasicProperties{
 
     @Test
     public void testID() throws IOException {
-        System.out.println(getPlaylistId("Top 200", "Larry's Favourite"));
+        System.out.println(getPlaylistId("Jazz List"));
     }
 
 
